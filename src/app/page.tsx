@@ -33,6 +33,7 @@ export default function Component() {
       }
 
       const responseData = await response.json();
+      setPrompt("")
       console.log(responseData.generatedContent);
       setResponse(responseData.generatedContent);
     } catch (error : any) {
