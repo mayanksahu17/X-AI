@@ -18,8 +18,8 @@ export default function Component() {
       setLoading(true);
       setError("");
 
-      // const apiUrl = 'https://gemini-server-hsl4.onrender.com/api/v1/generate';
-      const apiUrl = 'http://localhost:3000/api/v1/generate';
+      const apiUrl = 'https://gemini-server-hsl4.onrender.com/api/v1/generate';
+      // const apiUrl = 'http://localhost:3000/api/v1/generate';
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
