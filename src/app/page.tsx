@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react';
+
 export default function Component() {
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('');
@@ -12,20 +13,17 @@ export default function Component() {
         setError('Please enter a prompt.');
         return;
       }
-      console.log("prompt",prompt);
-      
 
       setLoading(true);
       setError("");
 
-      const apiUrl = 'https://gemini-server-hsl4.onrender.com/api/v1/generate';
-      // const apiUrl = 'http://localhost:3000/api/v1/generate';
+      const apiUrl = 'https://gemini-server-hsl4.onrender.com/api/v1/generate/res';
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt  : prompt }),
+        body: JSON.stringify({ prompt }),
       });
 
       if (!response.ok) {
@@ -33,8 +31,7 @@ export default function Component() {
       }
 
       const responseData = await response.json();
-      setPrompt("")
-      console.log(responseData.generatedContent);
+      setPrompt("");
       setResponse(responseData.generatedContent);
     } catch (error : any) {
       setError(error.message);
@@ -51,46 +48,40 @@ export default function Component() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-black text-white">
-      <BrainIcon className="h-20 w-20 text-gray-500" />
-      <h1 className="mt-8 text-4xl font-bold">How can I help you today?</h1>
-      <div className="mt-8 grid grid-cols-2 gap-8">
-        {/* Your buttons */}
-      </div>
-      <div className=" text-gray-500 m-4  w-[700px]"> {response}</div>
-
-      <div className='flex items-center mt-8 '>
-
+    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-4">
+      <BrainIcon className="h-12 w-12 text-gray-500 mb-4" />
+      <h1 className="text-2xl md:text-4xl font-bold text-center mb-4">How can I help you today?</h1>
+      <div className="w-full mb-4">
         <input
-          className="w-96 rounded-full bg-gray-800 py-3 px-6 text-white placeholder-gray-500"
-          placeholder="Write your Prompt..."
+          className="w-full rounded-full bg-gray-800 py-2 px-4 text-white placeholder-gray-500"
+          placeholder="Write your prompt..."
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <button
-          onClick={handleSubmit}
-          className="bg-white ml-4 py-3 px-6 text-black h-10 rounded-lg hover:bg-white hover:text-black"
-          disabled={loading}
-        >
-          {loading ? 'Loading...' : 'Submit'}
-        </button>
       </div>
-      
+      <button
+        onClick={handleSubmit}
+        className="w-full bg-white py-2 px-4 text-black rounded-lg hover:bg-white hover:text-black"
+        disabled={loading}
+      >
+        {loading ? 'Loading...' : 'Submit'}
+      </button>
       {error && (
         <p className="mt-4 text-red-500">{error}</p>
       )}
       {response && (
-        <div className="mt-8">
-        
+        <div className="mt-4">
+          <p className="text-gray-500">{response}</p>
         </div>
       )}
-      <p className="mt-4 text-gray-500">This can make mistakes. Consider checking important information.</p>
+      <p className="mt-4 text-sm text-gray-500 text-center">This can make mistakes. Consider checking important information.</p>
+      <span className="mt-8 font-semibold text-lg text-gray-800">Designed and Developed by Mayank Sahu</span>
     </div>
   );
 }
 
-function BrainIcon(props: any) {
+function BrainIcon(props : any) {
   return (
     <svg
       {...props}
