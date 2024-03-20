@@ -1,11 +1,10 @@
-"use client";
-import { useState } from 'react';
-
+"use client"
+import { useState,KeyboardEvent } from 'react';
 export default function Component() {
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const handleSubmit = async () => {
     try {
@@ -15,7 +14,7 @@ export default function Component() {
       }
 
       setLoading(true);
-      setError("");
+      setError('');
 
       const apiUrl = 'https://gemini-server-hsl4.onrender.com/api/v1/generate/res';
       const response = await fetch(apiUrl, {
@@ -31,7 +30,7 @@ export default function Component() {
       }
 
       const responseData = await response.json();
-      setPrompt("");
+      setPrompt('');
       setResponse(responseData.generatedContent);
     } catch (error : any) {
       setError(error.message);
@@ -40,20 +39,22 @@ export default function Component() {
     }
   };
 
-  const handleKeyDown = (event : any) => {
+  const handleKeyDown = (event : KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       event.preventDefault();
       handleSubmit();
     }
   };
 
+  const isCodeResponse = response.startsWith('<code>') && response.endsWith('</code>');
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-4">
       <BrainIcon className="h-12 w-12 text-gray-500 mb-4" />
       <h1 className="text-2xl md:text-4xl font-bold text-center mb-4">How can I help you today?</h1>
-      <div className="w-full mb-4">
+      <div className="w-full mb-4 mt-10">
         <input
-          className="w-full rounded-full bg-gray-800 py-2 px-4 text-white placeholder-gray-500"
+          className="w-[40%] ml-[29%] rounded-full bg-gray-800 py-2 px-4 text-white placeholder-gray-500"
           placeholder="Write your prompt..."
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
@@ -62,17 +63,19 @@ export default function Component() {
       </div>
       <button
         onClick={handleSubmit}
-        className="w-full bg-white py-2 px-4 text-black rounded-lg hover:bg-white hover:text-black"
+        className="w-[10%] bg-white py-2 px-4 text-black rounded-lg hover:bg-white hover:text-black"
         disabled={loading}
       >
         {loading ? 'Loading...' : 'Submit'}
       </button>
-      {error && (
-        <p className="mt-4 text-red-500">{error}</p>
-      )}
+      {error && <p className="mt-4 text-red-500">{error}</p>}
       {response && (
         <div className="mt-4">
-          <p className="text-gray-500">{response}</p>
+          {isCodeResponse ? (
+            <pre className="text-gray-500 bg-gray-900 p-4 rounded">{response.slice(6, -7)}</pre>
+          ) : (
+            <p className="text-gray-500">{response}</p>
+          )}
         </div>
       )}
       <p className="mt-4 text-sm text-gray-500 text-center">This can make mistakes. Consider checking important information.</p>
